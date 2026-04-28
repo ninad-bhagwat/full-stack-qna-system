@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 
-import {AppwriteException, ID, Models} from "appwrite"
+import {AppwriteException, ID, Models, OAuthProvider} from "appwrite"
 import { account } from "@/models/client/config";
 
 
@@ -36,6 +36,8 @@ interface IAuthStore {
     error?: AppwriteException| null
   }>
   logout(): Promise<void>
+  loginWithGoogle(): Promise<void>    
+  loginWithGithub(): Promise<void>
 }
 
 
@@ -111,6 +113,29 @@ export const useAuthStore = create<IAuthStore>()(
           console.log(error)
         }
       },
+      async loginWithGoogle() {
+    try {
+        account.createOAuth2Session(
+            "google" as OAuthProvider,
+            `${window.location.origin}/`,
+            `${window.location.origin}/login`
+        );
+    } catch (error) {
+        console.log(error)
+    }
+},
+
+async loginWithGithub() {
+    try {
+        account.createOAuth2Session(
+            "github" as OAuthProvider,
+            `${window.location.origin}/`,
+            `${window.location.origin}/login`
+        );
+    } catch (error) {
+        console.log(error)
+    }
+},
     })),
     {
       name: "auth",
